@@ -1,11 +1,16 @@
 ---
-description: Check the records against the rules this industry lives under (the ones listed in docs/compliance.md) and report what is missing, late, or about to breach, with the rule cited.
+description: Check the deals and the forecast against the rules in docs/compliance.md (contract evidence, published guidance, forecast policy, closed periods) and report what is breached, with the source.
 ---
 
-1. Read `docs/compliance.md`. Each rule has a name, the source it comes from, what a breach looks like in the data, and the SQL or command that finds it.
-2. Run each check. Use the CLI's `--json` output or a direct query through `scripts/lib/db.mjs`.
-3. Report as a table: rule, count, the worst example (name and days), the source. Order by severity: breached first, then due within 7 days, then clean.
-4. For anything breached, draft the fix the operator can approve: the record to update, the notice to send (draft to `drafts/`, never send), or the task to add.
-5. If a rule in `docs/compliance.md` is out of date, say so and stop. Do not guess at law. The operator confirms the rule, then you update the doc and the check together.
+1. Run the checks.
 
-Nothing here is legal advice. The doc records the rules the operator has told the system to enforce, with sources, and this command checks the data against them.
+```bash
+npm run forecast -- compliance
+```
+
+2. Read `docs/compliance.md` for the source behind each rule and how to read it.
+3. Report as a table: severity, rule, the deal or period, the issue, the source. Breaches first, then reviews.
+4. For anything breached, draft the fix the operator can approve: the deal to update (a contract date, a category, a close date), the guidance question for the board, or a follow-up to add. Draft to `drafts/`, never send.
+5. If a rule in `docs/compliance.md` is out of date, say so and stop. Do not guess at law or accounting standards. The operator confirms the rule, then you update the doc and the check together.
+
+Nothing here is legal or accounting advice. The checks flag records for a person to look at.

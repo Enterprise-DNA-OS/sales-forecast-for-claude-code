@@ -1,11 +1,78 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
+    "name": "forecast-pack",
+    "title": "Forecast pack",
+    "for_each": "select id, name from periods where status = 'open' order by starts",
     "file": "name",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Period",
+        "layout": "record",
+        "sql": "select p.name as period, p.starts, p.ends, p.currency, p.guidance_cents, sum(f.quota_cents)::bigint as quota_cents, sum(f.won_cents)::bigint as won_cents, sum(f.commit_cents)::bigint as commit_cents, sum(f.best_case_cents)::bigint as best_case_cents, sum(f.call_commit_cents)::bigint as rep_calls_cents from periods p join v_forecast f on f.period_id = p.id where p.id = $1 group by p.name, p.starts, p.ends, p.currency, p.guidance_cents"
+      },
+      {
+        "title": "By rep",
+        "sql": "select rep, currency, quota_cents, won_cents, commit_cents, best_case_cents, call_commit_cents as rep_call_cents, gap_cents from v_forecast where period_id = $1 and (quota_cents > 0 or open_deals > 0) order by rep"
+      },
+      {
+        "title": "Commit deals",
+        "sql": "select deal, account, rep, stage, currency, amount_cents, close_date, next_step, next_step_on from v_deals where period_id = $1 and not is_closed and forecast_category = 'commit' order by amount_cents desc"
+      },
+      {
+        "title": "Risks on open deals",
+        "sql": "select deal, rep, risk, detail from v_deal_risk where period_id = $1 order by deal, risk"
+      },
+      {
+        "title": "Controls",
+        "note": "From the checks in docs/compliance.md.",
+        "sql": "select severity, rule, item, issue from v_compliance where $1::uuid is not null order by case severity when 'breach' then 1 else 2 end, rule"
+      }
+    ]
+  },
+  {
+    "name": "deal-review",
+    "title": "Deal review sheet",
+    "for_each": "select distinct r.id, r.deal as name from v_deal_risk r where r.forecast_category in ('commit', 'best_case') order by name",
+    "file": "name",
+    "sections": [
+      {
+        "title": "Deal",
+        "layout": "record",
+        "sql": "select deal, account, rep, stage, probability, forecast_category as category, currency, amount_cents, close_date, next_step, next_step_on, last_activity_on, pushes from v_deals where id = $1"
+      },
+      {
+        "title": "Risks",
+        "sql": "select risk, detail from v_deal_risk where id = $1"
+      },
+      {
+        "title": "Changes",
+        "sql": "select changed_on, field, old_value as was, new_value as now, actor as by from opportunity_history where opportunity_id = $1 order by changed_on"
+      },
+      {
+        "title": "Recent activity",
+        "sql": "select happened_on, kind, note from activities where opportunity_id = $1 order by happened_on desc limit 10"
+      }
+    ]
+  },
+  {
+    "name": "accuracy-report",
+    "title": "Period close: forecast accuracy",
+    "for_each": "select id, name from periods where status = 'closed' order by starts",
+    "file": "name",
+    "sections": [
+      {
+        "title": "Period",
+        "layout": "record",
+        "sql": "select name as period, starts, ends, currency, closed_at, closed_by from periods where id = $1"
+      },
+      {
+        "title": "Calls against results",
+        "sql": "select rep, currency, first_call_on, first_call_cents, last_call_cents, won_cents, first_call_error_pct, last_call_error_pct from v_accuracy where period_id = $1 order by rep"
+      },
+      {
+        "title": "Won deals",
+        "sql": "select deal, account, rep, currency, amount_cents, closed_on, contract_signed_on from v_deals where period_id = $1 and is_won order by closed_on"
+      }
     ]
   }
 ]

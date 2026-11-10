@@ -1,0 +1,24 @@
+{
+  "captured": "2026-11-10T11:28:26.091Z",
+  "dataset": "Fictional seeded demo",
+  "screens": [
+    {
+      "title": "Pipeline waterfall",
+      "ask": "What moved in the forecast since last week?",
+      "command": "npm run forecast -- movement",
+      "output": "FY27 Q2 movement since 2026-11-03: net +$3,000\n\n  change         deal                       rep                  was       now    change  detail\n  -------------  -------------------------  --------------  --------  --------  --------  -----------------------------------\n  won            Packhouse labour tracking  Dev Patel        $48,000   $48,000        $0  commit to closed\n  lost           Visitor insights           Aroha Ngata      $35,000        $0  -$35,000  best case to omitted\n  pushed out     Campus services desk       Chloe Liu        $55,000            -$55,000  close date 2026-11-30 to 2027-01-14\n  recategorised  Network asset register     Dev Patel       $110,000  $110,000        $0  commit to best case\n  pulled in      Grower payments module     Ben Sutherland             $38,000  +$38,000\n  new            Workshop scheduling        Dev Patel                  $40,000  +$40,000\n  increased      Mill maintenance system    Dev Patel        $55,000   $70,000  +$15,000"
+    },
+    {
+      "title": "Deals at risk",
+      "ask": "Which deals in this quarter's forecast should I not trust?",
+      "command": "npm run forecast -- risk",
+      "output": "FY27 Q2: 4 open deal(s) carrying a risk\n\n  deal                          rep             category     amount  close       risks\n  ----------------------------  --------------  ---------  --------  ----------  ---------------------------------------------------------------------------------------------------------------------------------------------------\n  ERP expansion to three sites  Aroha Ngata     commit     $120,000  2026-11-05  close date passed (5 days ago); gone quiet (last activity 20 days ago); no next step (blank or undated); repeat slipper (close date pushed 3 times)\n  Supplier portal               Ben Sutherland  commit      $95,000  2026-12-20  commit at an early stage (Needs Analysis (20%)); next step overdue (Discovery call with ops (due 2026-11-07))\n  Matter reporting              Chloe Liu       best case   $45,000  2026-11-25  gone quiet (last activity 16 days ago); no next step (blank or undated)\n  Store replenishment pilot     Aroha Ngata     pipeline    $30,000  2026-12-15  gone quiet (last activity 25 days ago); next step overdue (Follow up after trade show (due 2026-10-31))"
+    },
+    {
+      "title": "Forecast accuracy",
+      "ask": "How close did each rep's first call come to what they actually won last quarter?",
+      "command": "npm run forecast -- accuracy",
+      "output": "  period   rep             first call on  first call  last call       won  first call off by  last call off by\n  -------  --------------  -------------  ----------  ---------  --------  -----------------  ----------------\n  FY27 Q1  Dev Patel       2026-07-04       $280,000   $210,000  $200,000               +40%               +5%\n  FY27 Q1  Aroha Ngata     2026-07-04       $300,000   $240,000  $230,000               +30%               +4%\n  FY27 Q1  Ben Sutherland  2026-07-04       $200,000   $185,000  $180,000               +11%               +3%\n  FY27 Q1  Chloe Liu       2026-07-04       $250,000   $255,000  $260,000                -4%               -2%"
+    }
+  ]
+}

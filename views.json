@@ -1,13 +1,58 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Sales Forecast for Claude Code: what needs attention, rendered by npm run view",
+    "title": "This week's forecast",
+    "subtitle": "Open periods. What moved, what is at risk, what needs a decision.",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Forecast by rep",
+        "sql": "select f.period, f.rep, f.currency, f.quota_cents, f.won_cents, f.commit_cents, f.best_case_cents, f.call_commit_cents as rep_call_cents, f.gap_cents from v_forecast f join periods p on p.id = f.period_id where p.status = 'open' and current_date between p.starts and p.ends and (f.quota_cents > 0 or f.open_deals > 0) order by f.rep"
+      },
+      {
+        "title": "What moved in the last seven days",
+        "note": "Compared with the last snapshot taken at least a week ago.",
+        "sql": "select period, change, deal, rep, currency, from_amount_cents as was_cents, to_amount_cents as now_cents, delta_cents as change_cents, detail from v_movement order by period"
+      },
+      {
+        "title": "Deals at risk",
+        "sql": "select deal, rep, forecast_category as category, currency, amount_cents, close_date, string_agg(risk || ' (' || detail || ')', '; ') as risks from v_deal_risk group by deal, rep, forecast_category, currency, amount_cents, close_date order by amount_cents desc"
+      },
+      {
+        "title": "Overdue follow-ups",
+        "sql": "select f.due, f.owner, f.note, o.name as deal from followups f left join opportunities o on o.id = f.opportunity_id where f.resolved_at is null and f.due < current_date order by f.due"
+      }
+    ]
+  },
+  {
+    "name": "slippage",
+    "title": "Slipped deals",
+    "subtitle": "Every open deal whose close date has moved out, with the first date it was given.",
+    "sections": [
+      {
+        "title": "Slipped deals",
+        "sql": "select d.deal, d.rep, d.forecast_category as category, d.currency, d.amount_cents, (select min(old_value) from opportunity_history h where h.opportunity_id = d.id and h.field = 'close_date') as first_close, d.close_date as close_now, d.pushes from v_deals d where d.pushes > 0 and not d.is_closed order by d.pushes desc, d.amount_cents desc"
+      }
+    ]
+  },
+  {
+    "name": "accuracy",
+    "title": "Forecast accuracy",
+    "subtitle": "How close each rep's calls came to what they won, for closed periods.",
+    "sections": [
+      {
+        "title": "Calls against results",
+        "sql": "select period, rep, currency, first_call_on, first_call_cents, last_call_cents, won_cents, first_call_error_pct, last_call_error_pct from v_accuracy order by period, abs(first_call_error_pct) desc nulls last"
+      }
+    ]
+  },
+  {
+    "name": "controls",
+    "title": "Forecast controls",
+    "sections": [
+      {
+        "title": "Findings",
+        "note": "Checks against the rules in docs/compliance.md. They flag records to look at. They are not legal or accounting advice.",
+        "sql": "select severity, rule, item, issue from v_compliance order by case severity when 'breach' then 1 else 2 end, rule"
       }
     ]
   }

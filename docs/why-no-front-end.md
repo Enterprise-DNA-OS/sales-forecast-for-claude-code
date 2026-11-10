@@ -13,12 +13,14 @@ That layer used to be the whole product, because talking to a database was hard.
 
 ## What you give up
 
-- **A visual board.** Stages are a table you ask about, not cards you drag.
+- **Charts you can click into.** Revenue Intelligence draws a pipeline trend and lets you drill down. Here you ask the question behind the click ("which deals made up the drop last week?") and get the rows. `npm run view` renders read-only pages if you want something to look at.
+- **Live sync with Salesforce.** This reads an export. Run it daily or weekly; Enterprise DNA can schedule the export for you.
+- **Inline editing in the forecast grid.** Reps submit their call with a command, not by typing into a cell.
 - **A phone app.** It runs where Claude Code runs.
 - **A vendor help desk.** This is open source. Enterprise DNA supports the installed version for businesses that want someone to call.
 
 ## Who this fits
 
-Small teams who already use Claude Code, or who would rather learn to ask than learn another interface. If your team needs a screen to look at all day, keep Salesforce Revenue Intelligence. If you need the answers more than the screens, this is cheaper, faster and yours.
+Small teams who already use Claude Code, or who would rather learn to ask than learn another interface. If your sales leaders need a screen to look at all day, keep Salesforce Revenue Intelligence. If you need the answers more than the screens, this is cheaper, faster and yours.
 
 Installed and run for you: https://enterprisedna.co/omni/instead-of/salesforce-revenue-intelligence
